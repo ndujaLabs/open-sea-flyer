@@ -1,4 +1,4 @@
-require('dotenv/config')
+require('dotenv').config()
 const Discord = require('discord.js')
 const {Client, Intents} = Discord
 const discordBot = new Client({intents: [Intents.FLAGS.GUILDS]})
@@ -69,8 +69,8 @@ async function sleep(millis) {
 }
 
 async function main() {
-  // const seconds = process.env.SECONDS ? parseInt(process.env.SECONDS) : 3600;
-  const seconds = 22000
+  const seconds = process.env.SECONDS ? parseInt(process.env.SECONDS) : 3600;
+  // const seconds = 22000
   const afterLastCheck = (Math.round(new Date().getTime() / 1000) - (seconds))
 
   const params = new URLSearchParams({
