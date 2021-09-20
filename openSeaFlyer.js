@@ -94,8 +94,9 @@ async function main() {
     for (let sale of openSeaResponse.asset_events.reverse()) {
       embeds.push(buildMessage(sale))
     }
-
-    await channel.send({embeds})
+    if (embeds.length) {
+      await channel.send({embeds})
+    }
   }
 
   await sleep(parseInt(process.env.SECONDS) * 1000)
