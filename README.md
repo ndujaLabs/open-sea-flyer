@@ -11,9 +11,7 @@ Please don't abuse the OpenSea API by running this more frequently than once per
 
 ## Prerequisites
 
-This script can easily be deployed to Heroku and run on a job schedule, so you'll need a free Heroku account from https://heroku.com. The script can be run locally or from any server that offers a NodeJS runtime.
-
-You'll also need a Discord bot who has the ability to post in a channel in your Discord server.
+You'll need a Discord bot who has the ability to post in a channel in your Discord server.
 
 First, you need a Discord server where you have permission to add a Bot. It's free and easy to create your own Discord server.
 
@@ -42,7 +40,7 @@ Once the bot is in your server, ensure you have the following two values and you
 - **botToken** i.e `SBI1MDI0NzUyNDQ3NzgyOTEz.YF36LQ.Sw-rczOfalK0lVzuW8vBjjcnsy0`
 - **channelId** i.e. `814900494928445450`
 
-## Run locally
+## Run locally or on a remote machine
 
 You can run this script locally by pulling the repo to your local machine.
 
@@ -54,3 +52,21 @@ Then copy the `.env.example` file to `.env` and replace the example values with 
 $ npm run start
 ```
 
+Notice that Open Sea Flyer requires at least Node 14, because `discord.js` requires it.
+
+If you put it on a remote server, use a process manager. We suggests [pm2](https://pm2.keymetrics.io/)
+
+After installing it, you can run to launch the app with pm2 
+```
+./start.sh
+```
+
+# Copyright
+
+Original author: [Sam Bauch](https://github.com/sbauch)
+
+Contributors to the pure JS versions: [Francesco Sullo](https://francesco.sullo.co)
+
+# License
+
+MIT

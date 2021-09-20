@@ -1,6 +1,7 @@
 lockfileVersion: 5.3
 
 specifiers:
+  chalk: ^4.1.2
   discord.js: ^13.1.0
   dotenv: ^8.2.0
   ethers: ^5.1.0
@@ -8,6 +9,7 @@ specifiers:
   pm2: ^5.1.1
 
 dependencies:
+  chalk: 4.1.2
   discord.js: 13.1.0
   dotenv: 8.6.0
   ethers: 5.4.7
@@ -619,6 +621,14 @@ packages:
   /chalk/3.0.0:
     resolution: {integrity: sha512-4D3B6Wf41KOYRFdszmDqMCGq5VV/uMAB273JILmO+3jAlh8X4qDtdtgCR3fxtbLEMzSx22QdhnDcJvu2u1fVwg==}
     engines: {node: '>=8'}
+    dependencies:
+      ansi-styles: 4.3.0
+      supports-color: 7.2.0
+    dev: false
+
+  /chalk/4.1.2:
+    resolution: {integrity: sha512-oKnbhFyRIXpUuez8iBMmyEa4nbj4IOQyuhc/wy9kY7/WVPcwIO9VA668Pu8RkO7+0G76SLROeyw9CpQ061i4mA==}
+    engines: {node: '>=10'}
     dependencies:
       ansi-styles: 4.3.0
       supports-color: 7.2.0

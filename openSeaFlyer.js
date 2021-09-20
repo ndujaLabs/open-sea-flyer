@@ -1,4 +1,5 @@
 require('dotenv').config()
+const chalk = require('chalk')
 const Discord = require('discord.js')
 const {Client, Intents} = Discord
 const discordBot = new Client({intents: [Intents.FLAGS.GUILDS]})
@@ -6,7 +7,26 @@ const discordBot = new Client({intents: [Intents.FLAGS.GUILDS]})
 const fetch = require('node-fetch')
 const {ethers} = require("ethers")
 
-const OPENSEA_SHARED_STOREFRONT_ADDRESS = '0x495f947276749Ce646f68AC8c248420045cb7b5e';
+const OPENSEA_SHARED_STOREFRONT_ADDRESS = '0x495f947276749Ce646f68AC8c248420045cb7b5e'
+
+let failed = []
+;[
+  'CONTRACT_ADDRESS',
+  'COLLECTION_SLUG',
+  'DISCORD_BOT_TOKEN',
+  'DISCORD_CHANNEL_ID'].map(f => {
+  if (!process.env[f]) {
+    failed.push(f)
+  }
+})
+if (failed.length) {
+  console.log(chalk.red(`.env file not properly configured.
+The following variables are missing:
+${failed.join('\n')}  
+`))
+  process.exit(1)
+}
+
 let channel
 discordBot.login(process.env.DISCORD_BOT_TOKEN);
 discordBot.on('ready', async () => {
