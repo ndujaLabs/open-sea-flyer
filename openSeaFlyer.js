@@ -19,7 +19,7 @@ const buildMessage = sale => {
   const {asset} = (sale || {})
   if (asset) {
 
-    console.log(asset)
+    // console.log(asset)
 
     let {token_id, name, permalink, collection, image_original_url} = asset
 
@@ -64,6 +64,10 @@ function has(obj, ...props) {
   return true
 }
 
+async function sleep(millis) {
+  return new Promise(resolve => setTimeout(resolve, millis))
+}
+
 async function main() {
   // const seconds = process.env.SECONDS ? parseInt(process.env.SECONDS) : 3600;
   const seconds = 22000
@@ -93,5 +97,7 @@ async function main() {
 
     await channel.send({embeds})
   }
-  setTimeout(main, process.env.SECONDS)
+
+  await sleep(parseInt(process.env.SECONDS) * 1000)
+  main()
 }
