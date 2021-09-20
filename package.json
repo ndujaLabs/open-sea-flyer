@@ -1,19 +1,13 @@
 {
   "license": "MIT",
   "scripts": {
-    "heroku-postdeploy": "yarn ts-node checkSales.ts"
+    "start": "node openSeaFlyer",
+    "daemon": "pm2 start openSeaFlyer"
   },
   "dependencies": {
-    "@types/node": "^14.14.36",
-    "date-fns": "^2.19.0",
-    "discord.js": "^12.5.1",
+    "discord.js": "^13.1.0",
     "dotenv": "^8.2.0",
     "ethers": "^5.1.0",
-    "node-fetch": "^2.6.1",
-    "ts-node": "^9.1.1",
-    "typescript": "^4.2.3"
-  },
-  "devDependencies": {
-    "@types/node-fetch": "^2.5.9"
+    "node-fetch": "^2.6.1"
   }
 }

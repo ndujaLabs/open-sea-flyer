@@ -1,6 +1,8 @@
 # Discord Bot for OpenSea
 
-Need help? [Join us on Discord](https://discord.gg/BheNSUfcvm)!
+### Forked from [https://github.com/0xEssential/opensea-discord-bot](https://github.com/0xEssential/opensea-discord-bot) and converted to pure Javascript
+
+[comment]: <> (Need help? [Join us on Discord]&#40;https://discord.gg/BheNSUfcvm&#41;!)
 
 
 This project includes a script that can be used to routinely hit the OpenSea API, check for recent sales on a collection, and post embeds into a Discord channel with information about the sale.
@@ -49,25 +51,6 @@ First, install the dependencies with `npm` or `yarn`.
 Then copy the `.env.example` file to `.env` and replace the example values with your own.
 
 ```
-$ yarn ts-node ./checkSales.ts
-// or
-$ ts-node ./checkSales.ts
+$ npm run start
 ```
 
-## Deploy to Heroku
-
-The easiest way to run this script on a chron scheduler is to deploy it to Heroku with this button:
-
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
-
-Heroku will require that you input the ENV vars that are necessary to run the script, and will run the `checkSales.ts` script after a successful deploy.
-
-The `scheduler` add-on is included in the `app.json` but **you still must schedule the script to run** and we recommend running it hourly. This way the script will run every hour and will check the OpenSea API for sales in the last hour.
-
-To set up the script to run on a schedule, once your Heroku app finishes deploying, click "Manage App", and then navigate to the Heroku Scheduler addon. Create a new job, run it every, and enter 
-
-```bash
-yarn ts-node checkSales.ts
-```
-
-as the Run Command.
