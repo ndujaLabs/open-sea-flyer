@@ -1,13 +1,13 @@
 {
   "license": "MIT",
   "scripts": {
-    "start": "node openSeaFlyer",
-    "daemon": "pm2 start openSeaFlyer"
+    "start": "node openSeaFlyer"
   },
   "dependencies": {
     "discord.js": "^13.1.0",
     "dotenv": "^8.2.0",
     "ethers": "^5.1.0",
-    "node-fetch": "^2.6.1"
+    "node-fetch": "^2.6.1",
+    "pm2": "^5.1.1"
   }
 }
