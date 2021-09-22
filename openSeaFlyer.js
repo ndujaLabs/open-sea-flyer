@@ -49,24 +49,58 @@ const buildMessage = sale => {
     let buyer = sale.winner_account ? sale.winner_account.address : ''
     let seller = sale.seller ? sale.seller.address : ''
 
+    let title
+    let fields
+
+    function getPrice(price) {
+      return `${ethers.utils.formatEther(price || '0')}${ethers.constants.EtherSymbol}`
+    }
+
+    switch (sale.event_type) {
+      case 'successful':
+        title = name + ' sold!'
+        fields = [
+          {name: 'Seller', value: seller},
+          {name: 'Buyer', value: buyer},
+          {name: 'Price', value: getPrice(sale.total_price)}
+        ]
+        break
+      case 'created':
+        title = name + ' is on auction!'
+        fields = [
+          {name: 'Seller', value: seller},
+          {name: 'Price', value: getPrice(sale.starting_price)}
+        ]
+        break
+      case 'bid_entered':
+        title = 'New bid for ' + name
+        fields =[
+          {name: 'Buyer', value: buyer},
+          {name: 'Price', value: getPrice(sale.bid_amount)}
+        ]
+        break
+      case 'transfer':
+        title = name + ' transferred'
+        fields = [
+          {name: 'From', value: sale.from_account.address},
+          {name: 'To', value: sale.to_account.address}
+        ]
+        break
+      default:
+        // not supported event types
+        return false
+    }
+
     return new Discord.MessageEmbed()
-        .setColor('#0099ff')
-        .setTitle(name + ' sold!')
+        .setColor('#fff8bb')
+        .setTitle(title)
         .setURL(permalink || '')
         // .setAuthor('Open Sea Flyer', 'https://files.readme.io/566c72b-opensea-logomark-full-colored.png', 'https://github.com/sbauch/opensea-discord-bot')
-        // .setThumbnail(collection.image_url)
-        .addFields(
-            {name: 'Name', value: name},
-            {
-              name: 'Amount',
-              value: `${ethers.utils.formatEther(sale.total_price || '0')}${ethers.constants.EtherSymbol}`
-            },
-            {name: 'Buyer', value: buyer},
-            {name: 'Seller', value: seller},
-        )
+        .setThumbnail(collection.image_url)
+        .addFields(...fields)
         .setImage(image_original_url.replace(/svg$/, 'png'))
         .setTimestamp(Date.parse(`${sale.created_date}Z`))
-        .setFooter('Sold on OpenSea', 'https://files.readme.io/566c72b-opensea-logomark-full-colored.png')
+        .setFooter('OpenSea', 'https://files.readme.io/566c72b-opensea-logomark-full-colored.png')
   }
 }
 
@@ -90,13 +124,13 @@ async function sleep(millis) {
 
 async function main() {
   const seconds = process.env.SECONDS ? parseInt(process.env.SECONDS) : 3600;
-  // const seconds = 22000
   const afterLastCheck = (Math.round(new Date().getTime() / 1000) - (seconds))
 
   const params = new URLSearchParams({
     offset: '0',
-    event_type: 'successful',
+    event_type: 'created',
     only_opensea: 'false',
+    limit: '10',
     occurred_after: afterLastCheck.toString(),
     collection_slug: process.env.COLLECTION_SLUG
   })
@@ -112,11 +146,16 @@ async function main() {
 
     let embeds = []
     for (let sale of openSeaResponse.asset_events.reverse()) {
-      embeds.push(buildMessage(sale))
+      const message = buildMessage(sale)
+      if (message) {
+        embeds.push(message)
+      }
+      // if (embeds.length > 9) break
     }
     if (embeds.length) {
       await channel.send({embeds})
     }
+    // process.exit(1)
   }
 
   await sleep(parseInt(process.env.SECONDS) * 1000)
