@@ -91,15 +91,13 @@ const buildMessage = sale => {
         return false
     }
 
-    console.log(fields)
-
     return new Discord.MessageEmbed()
         .setColor('#fff8bb')
         .setTitle(title)
         .setURL(permalink || '')
         // .setAuthor('Open Sea Flyer', 'https://files.readme.io/566c72b-opensea-logomark-full-colored.png', 'https://github.com/sbauch/opensea-discord-bot')
         .setThumbnail(collection.image_url)
-        .addFields(fields)
+        .addFields(...fields)
         .setImage(image_original_url.replace(/svg$/, 'png'))
         .setTimestamp(Date.parse(`${sale.created_date}Z`))
         .setFooter('OpenSea', 'https://files.readme.io/566c72b-opensea-logomark-full-colored.png')
@@ -126,15 +124,14 @@ async function sleep(millis) {
 
 async function main() {
   const seconds = process.env.SECONDS ? parseInt(process.env.SECONDS) : 3600;
-  // const seconds = 1000000
   const afterLastCheck = (Math.round(new Date().getTime() / 1000) - (seconds))
 
   const params = new URLSearchParams({
     offset: '0',
-    // event_type: 'bid_entered',
+    event_type: 'created',
     only_opensea: 'false',
-    // limit: '10',
-    // occurred_after: afterLastCheck.toString(),
+    limit: '10',
+    occurred_after: afterLastCheck.toString(),
     collection_slug: process.env.COLLECTION_SLUG
   })
 
@@ -149,13 +146,16 @@ async function main() {
 
     let embeds = []
     for (let sale of openSeaResponse.asset_events.reverse()) {
-      // console.log(buildMessage(sale))
-      embeds.push(buildMessage(sale))
+      const message = buildMessage(sale)
+      if (message) {
+        embeds.push(message)
+      }
+      // if (embeds.length > 9) break
     }
     if (embeds.length) {
       await channel.send({embeds})
     }
-    process.exit(1)
+    // process.exit(1)
   }
 
   await sleep(parseInt(process.env.SECONDS) * 1000)
