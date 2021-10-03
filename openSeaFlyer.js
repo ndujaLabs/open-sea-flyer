@@ -74,7 +74,7 @@ const buildMessage = sale => {
         break
       case 'bid_entered':
         title = 'New bid for ' + name
-        fields =[
+        fields = [
           {name: 'Buyer', value: buyer},
           {name: 'Price', value: getPrice(sale.bid_amount)}
         ]
@@ -128,7 +128,7 @@ async function main() {
 
   const params = new URLSearchParams({
     offset: '0',
-    event_type: 'created',
+    // event_type: 'created',
     only_opensea: 'false',
     limit: '10',
     occurred_after: afterLastCheck.toString(),
@@ -139,23 +139,24 @@ async function main() {
     params.append('asset_contract_address', process.env.CONTRACT_ADDRESS)
   }
 
-  const openSeaResponse = await fetch(
-      "https://api.opensea.io/api/v1/events?" + params).then((resp) => resp.json());
+  let openSeaResponse = await fetch(
+      "https://api.opensea.io/api/v1/events?" + params)
+  try {
+    openSeaResponse = JSON.parse(openSeaResponse)
+  }catch(e) {
+    if (has(openSeaResponse, 'asset_events')) {
 
-  if (has(openSeaResponse, 'asset_events')) {
-
-    let embeds = []
-    for (let sale of openSeaResponse.asset_events.reverse()) {
-      const message = buildMessage(sale)
-      if (message) {
-        embeds.push(message)
+      let embeds = []
+      for (let sale of openSeaResponse.asset_events.reverse()) {
+        const message = buildMessage(sale)
+        if (message) {
+          embeds.push(message)
+        }
       }
-      // if (embeds.length > 9) break
+      if (embeds.length) {
+        await channel.send({embeds})
+      }
     }
-    if (embeds.length) {
-      await channel.send({embeds})
-    }
-    // process.exit(1)
   }
 
   await sleep(parseInt(process.env.SECONDS) * 1000)
