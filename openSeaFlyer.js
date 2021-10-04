@@ -6,6 +6,7 @@ const discordBot = new Client({intents: [Intents.FLAGS.GUILDS]})
 // const { TextChannel } = Discord
 const fetch = require('node-fetch')
 const {ethers} = require("ethers")
+const superagent = require('superagent')
 
 const OPENSEA_SHARED_STOREFRONT_ADDRESS = '0x495f947276749Ce646f68AC8c248420045cb7b5e'
 
@@ -79,6 +80,13 @@ const buildMessage = sale => {
           {name: 'Price', value: getPrice(sale.bid_amount)}
         ]
         break
+      case 'offer_entered':
+        title = 'New offer for ' + name
+        fields = [
+          {name: 'From', value: sale.from_account.address},
+          {name: 'Price', value: getPrice(sale.bid_amount)}
+        ]
+        break
       case 'transfer':
         title = name + ' transferred'
         fields = [
@@ -88,6 +96,7 @@ const buildMessage = sale => {
         break
       default:
         // not supported event types
+        console.log('Event_type', sale.event_type)
         return false
     }
 
@@ -123,12 +132,12 @@ async function sleep(millis) {
 }
 
 async function main() {
-  const seconds = process.env.SECONDS ? parseInt(process.env.SECONDS) : 3600;
+  const seconds = 84000 //process.env.SECONDS ? parseInt(process.env.SECONDS) : 3600;
   const afterLastCheck = (Math.round(new Date().getTime() / 1000) - (seconds))
 
   const params = new URLSearchParams({
     offset: '0',
-    // event_type: 'created',
+    event_type: 'offer_entered',
     only_opensea: 'false',
     limit: '10',
     occurred_after: afterLastCheck.toString(),
@@ -139,24 +148,22 @@ async function main() {
     params.append('asset_contract_address', process.env.CONTRACT_ADDRESS)
   }
 
-  let openSeaResponse = await fetch(
-      "https://api.opensea.io/api/v1/events?" + params)
   try {
-    openSeaResponse = JSON.parse(openSeaResponse)
-  }catch(e) {
+    let openSeaResponse = (await superagent.get("https://api.opensea.io/api/v1/events?" + params)
+        .set({Accept: 'application/json'})).body
+
     if (has(openSeaResponse, 'asset_events')) {
 
-      let embeds = []
       for (let sale of openSeaResponse.asset_events.reverse()) {
         const message = buildMessage(sale)
         if (message) {
-          embeds.push(message)
+          await channel.send({embeds: [message]})
+          await sleep(3000)
         }
       }
-      if (embeds.length) {
-        await channel.send({embeds})
-      }
     }
+  } catch (e) {
+    console.error(e)
   }
 
   await sleep(parseInt(process.env.SECONDS) * 1000)
