@@ -132,7 +132,7 @@ async function sleep(millis) {
 }
 
 async function main() {
-  const seconds = 84000 //process.env.SECONDS ? parseInt(process.env.SECONDS) : 3600;
+  const seconds = process.env.SECONDS ? parseInt(process.env.SECONDS) : 3600;
   const afterLastCheck = (Math.round(new Date().getTime() / 1000) - (seconds))
 
   const params = new URLSearchParams({
