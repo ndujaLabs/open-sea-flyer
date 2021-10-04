@@ -105,7 +105,7 @@ const buildMessage = sale => {
         .setTitle(title)
         .setURL(permalink || '')
         // .setAuthor('Open Sea Flyer', 'https://files.readme.io/566c72b-opensea-logomark-full-colored.png', 'https://github.com/sbauch/opensea-discord-bot')
-        .setThumbnail(collection.image_url)
+        // .setThumbnail(collection.image_url)
         .addFields(...fields)
         .setImage(image_original_url.replace(/svg$/, 'png'))
         .setTimestamp(Date.parse(`${sale.created_date}Z`))
