@@ -4,9 +4,9 @@ const Discord = require('discord.js')
 const {Client, Intents} = Discord
 const discordBot = new Client({intents: [Intents.FLAGS.GUILDS]})
 // const { TextChannel } = Discord
-const fetch = require('node-fetch')
 const {ethers} = require("ethers")
 const superagent = require('superagent')
+const { SHA3 } = require('sha3')
 
 const OPENSEA_SHARED_STOREFRONT_ADDRESS = '0x495f947276749Ce646f68AC8c248420045cb7b5e'
 
@@ -35,12 +35,12 @@ discordBot.on('ready', async () => {
   main()
 })
 
+const history = {}
+
 const buildMessage = sale => {
 
   const {asset} = (sale || {})
   if (asset) {
-
-    // console.log(asset)
 
     let {token_id, name, permalink, collection, image_original_url} = asset
 
@@ -56,7 +56,7 @@ const buildMessage = sale => {
     function getPrice(price) {
       return `${ethers.utils.formatEther(price || '0')}${ethers.constants.EtherSymbol}`
     }
-
+    console.log('Event_type', sale.event_type)
     switch (sale.event_type) {
       case 'successful':
         title = name + ' sold!'
@@ -99,6 +99,11 @@ const buildMessage = sale => {
         console.log('Event_type', sale.event_type)
         return false
     }
+    const hash = new SHA3(512)
+    hash.update(JSON.stringify({data: [title, fields]}))
+    const key = hash.digest('hex')
+    if (history[key]) return false
+    history[key] = true
 
     return new Discord.MessageEmbed()
         .setColor('#fff8bb')
@@ -137,7 +142,7 @@ async function main() {
 
   const params = new URLSearchParams({
     offset: '0',
-    event_type: 'offer_entered',
+    // event_type: 'offer_entered',
     only_opensea: 'false',
     limit: '10',
     occurred_after: afterLastCheck.toString(),
@@ -157,6 +162,7 @@ async function main() {
       for (let sale of openSeaResponse.asset_events.reverse()) {
         const message = buildMessage(sale)
         if (message) {
+          // console.log(message)
           await channel.send({embeds: [message]})
           await sleep(3000)
         }
@@ -167,5 +173,6 @@ async function main() {
   }
 
   await sleep(parseInt(process.env.SECONDS) * 1000)
+  // await sleep(10 * 1000)
   main()
 }
