@@ -65,7 +65,7 @@ After installing it, you can run to launch the app with pm2
 
 Original author: [Sam Bauch](https://github.com/sbauch)
 
-Contributors to the pure JS versions: [Francesco Sullo](https://francesco.sullo.co)
+Author of the JS versions: [Francesco Sullo](https://francesco.sullo.co)
 
 # License
 
