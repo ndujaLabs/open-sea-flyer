@@ -156,7 +156,6 @@ async function main() {
 
   try {
     let openSeaResponse = (await superagent.get("https://api.opensea.io/api/v1/events?" + params)
-        .set({Accept: 'application/json'})
         .set({Accept: 'application/json', 'X-API-KEY': process.env.OPENSEA_API_KEY})).body
 
     if (has(openSeaResponse, 'asset_events')) {
