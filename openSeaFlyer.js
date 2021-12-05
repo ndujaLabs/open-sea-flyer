@@ -6,7 +6,7 @@ const discordBot = new Client({intents: [Intents.FLAGS.GUILDS]})
 // const { TextChannel } = Discord
 const {ethers} = require("ethers")
 const superagent = require('superagent')
-const { SHA3 } = require('sha3')
+const {SHA3} = require('sha3')
 
 const OPENSEA_SHARED_STOREFRONT_ADDRESS = '0x495f947276749Ce646f68AC8c248420045cb7b5e'
 
@@ -56,6 +56,7 @@ const buildMessage = sale => {
     function getPrice(price) {
       return `${ethers.utils.formatEther(price || '0')}${ethers.constants.EtherSymbol}`
     }
+
     console.log('Event_type', sale.event_type)
     switch (sale.event_type) {
       case 'successful':
@@ -155,7 +156,8 @@ async function main() {
 
   try {
     let openSeaResponse = (await superagent.get("https://api.opensea.io/api/v1/events?" + params)
-        .set({Accept: 'application/json'})).body
+        .set({Accept: 'application/json'})
+        .set({Accept: 'application/json', 'X-API-KEY': process.env.OPENSEA_API_KEY})).body
 
     if (has(openSeaResponse, 'asset_events')) {
 
